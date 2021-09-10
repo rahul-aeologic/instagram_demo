@@ -6,6 +6,11 @@ import 'package:instagram_demo/screen/bottomIconScreen/plusBottomIconScreen.dart
 import 'package:instagram_demo/screen/bottomIconScreen/searchBottomIconScreen.dart';
 
 class HomeScreen extends StatefulWidget {
+  String username;
+  String name;
+  String profileUrl;
+  HomeScreen(@required this.username, this.name, this.profileUrl);
+
   @override
   _HomeScreenState createState() => new _HomeScreenState();
 }
@@ -26,14 +31,12 @@ class _HomeScreenState extends State<HomeScreen> {
       new SearchBottomIconScreen(),
       new PlusBottomIconScreen(),
       new LikeBottomIconScreen(),
-      new AccountBottomIconScreen(),
+      new AccountBottomIconScreen(widget.name, widget.name, widget.profileUrl),
     ];
   }
 
   @override
   Widget build(BuildContext context) {
-    var _textStyle = new TextStyle(fontSize: 0.0);
-
     var _bottomItems = new BottomNavigationBar(
       currentIndex: _currentTab,
       onTap: (int index) {
@@ -50,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Icons.home,
             color: Colors.grey,
           ),
-          title: new Text("", style: _textStyle),
+          label: 'Home',
           activeIcon: Icon(
             Icons.home,
             color: Colors.black,
@@ -61,50 +64,48 @@ class _HomeScreenState extends State<HomeScreen> {
             Icons.search,
             color: Colors.grey,
           ),
-          title: new Text("", style: _textStyle),
           activeIcon: Icon(
             Icons.search,
             color: Colors.black,
           ),
+          label: 'Search',
         ),
         BottomNavigationBarItem(
           icon: Icon(
             Icons.add_box,
             color: Colors.grey,
           ),
-          title: new Text("", style: _textStyle),
           activeIcon: Icon(
             Icons.add_box,
             color: Colors.black,
           ),
+          label: 'Add',
         ),
         BottomNavigationBarItem(
           icon: Icon(
             Icons.favorite,
             color: Colors.grey,
           ),
-          title: new Text("", style: _textStyle),
           activeIcon: Icon(
             Icons.favorite,
             color: Colors.black,
           ),
+          label: 'Fav',
         ),
         BottomNavigationBarItem(
           icon: Icon(
             Icons.account_circle,
             color: Colors.grey,
           ),
-          title: new Text("", style: _textStyle),
           activeIcon: Icon(
             Icons.account_circle,
             color: Colors.black,
           ),
+          label: 'Account',
         ),
       ],
     );
 
-    return new MaterialApp(
-      home: new Scaffold(bottomNavigationBar: _bottomItems, body: _currentPage),
-    );
+    return new Scaffold(bottomNavigationBar: _bottomItems, body: _currentPage);
   }
 }

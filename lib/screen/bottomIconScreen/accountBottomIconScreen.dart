@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 
 class AccountBottomIconScreen extends StatefulWidget {
+  String username;
+  String name;
+  String profileUrl;
+  AccountBottomIconScreen(this.username, this.name, this.profileUrl);
+
   @override
   _AccountBottomIconScreenState createState() =>
       _AccountBottomIconScreenState();
@@ -13,7 +18,7 @@ class _AccountBottomIconScreenState extends State<AccountBottomIconScreen> {
       body: new Column(
         children: <Widget>[
           _appBar(),
-          _profile(),
+          _profile(widget.profileUrl, widget.name),
           _centerButtons(),
           _displayImages()
         ],
@@ -33,7 +38,7 @@ class _AccountBottomIconScreenState extends State<AccountBottomIconScreen> {
               new Padding(
                 padding: new EdgeInsets.only(left: 10.0),
                 child: new Text(
-                  "UserName",
+                  widget.username,
                   style: new TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
@@ -132,7 +137,7 @@ class _AccountBottomIconScreenState extends State<AccountBottomIconScreen> {
     );
   }
 
-  Widget _profile() {
+  Widget _profile(profileUrl, name) {
     return new Container(
       height: 150.0,
       margin: new EdgeInsets.only(top: 5.0),
@@ -143,15 +148,12 @@ class _AccountBottomIconScreenState extends State<AccountBottomIconScreen> {
             children: <Widget>[
               new Column(
                 children: <Widget>[
-                  new Image.asset(
-                    "assets/images/your_acc.png",
-                    height: 100.0,
-                  ),
+                  Image.network(profileUrl),
                   new Container(
                     margin: EdgeInsets.only(top: 10.0, bottom: 5.0),
                     alignment: Alignment.bottomLeft,
                     child: new Text(
-                      "DisplayName",
+                      name,
                       style: new TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),

@@ -273,8 +273,10 @@ class _LoginSignupState extends State<LoginSignup> {
           password: _password.text,
         ))
             .user;
-        if (user !=null) {
-          final route = MaterialPageRoute(builder: (context) => HomeScreen());
+        if (user != null) {
+          final route = MaterialPageRoute(
+              builder: (context) =>
+                  HomeScreen(user.displayName, user.photoUrl, user.email));
           Navigator.push(context, route);
           // String email = _userId.text;
           print(user.email);
@@ -328,10 +330,12 @@ class _LoginSignupState extends State<LoginSignup> {
         accessToken: googleSignInAuthentication.accessToken,
         idToken: googleSignInAuthentication.idToken,
       );
-      final route = MaterialPageRoute(builder: (context) => HomeScreen());
-      await _auth
-          .signInWithCredential(credential)
-          .then((value) => Navigator.push(context, route));
+      final route = MaterialPageRoute(
+          builder: (context) => HomeScreen(googleSignInAccount.email,
+              googleSignInAccount.displayName, googleSignInAccount.photoUrl));
+      await _auth.signInWithCredential(credential).then((value) {
+        Navigator.push(context, route);
+      });
     } catch (e) {
       _showEmptyDialog('Google signin failed');
     }
