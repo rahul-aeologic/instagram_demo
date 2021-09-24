@@ -263,7 +263,7 @@ class _LoginSignupState extends State<LoginSignup> {
   }
 
   void _loginWithEmailPassword() async {
-    Crashlytics.instance.crash();
+    FirebaseCrashlytics.instance.crash();
 
     // if (_userId.text.isEmpty) {
     //   _showEmptyDialog("Please enter username");
@@ -329,7 +329,7 @@ class _LoginSignupState extends State<LoginSignup> {
           await _googleSignIn.signIn();
       final GoogleSignInAuthentication googleSignInAuthentication =
           await googleSignInAccount!.authentication;
-      final AuthCredential credential = GoogleAuthProvider.getCredential(
+      final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleSignInAuthentication.accessToken,
         idToken: googleSignInAuthentication.idToken,
       );

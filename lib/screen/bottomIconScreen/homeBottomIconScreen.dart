@@ -178,9 +178,10 @@ class _HomeBottomIconScreenState extends State<HomeBottomIconScreen> {
         } else if (snapshot.hasData || snapshot.data != null) {
           return Flexible(
               child: new ListView.builder(
-                  itemCount: snapshot.data!.documents.length,
+                  itemCount: snapshot.data!.docs.length,
                   itemBuilder: (BuildContext context, int index) {
-                    var noteInfo = snapshot.data!.documents[index].data!;
+                    var noteInfo = snapshot.data!.docs[index].data()
+                        as Map<String, dynamic>;
                     String name = noteInfo['name'];
                     String username = noteInfo['username'];
                     String userImageUrl = noteInfo['userImageUrl'];

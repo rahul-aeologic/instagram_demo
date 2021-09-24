@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-final _firestore = Firestore.instance;
+final _firestore = FirebaseFirestore.instance;
 final CollectionReference _mainCollection = _firestore.collection('users');
 
 class Database {
@@ -13,18 +13,18 @@ class Database {
     required String title,
     required String imageUrl,
   }) async {
-    DocumentReference documentReferencer = _mainCollection.document();
+    DocumentReference documentReferencer = _mainCollection.doc();
 
     Map<String, dynamic> data = <String, dynamic>{
       "title": title,
       "name": name,
-      "username":username,
+      "username": username,
       "userImageUrl": userImageUrl,
       "imageUrl": imageUrl,
     };
 
     await documentReferencer
-        .setData(data)
+        .set(data)
         .whenComplete(() => print("Note item added to the database"))
         .catchError((e) => print(e));
   }
@@ -35,7 +35,7 @@ class Database {
     required String docId,
     required String imageUrl,
   }) async {
-    DocumentReference documentReferencer = _mainCollection.document(docId);
+    DocumentReference documentReferencer = _mainCollection.doc(docId);
 
     Map<String, dynamic> data = <String, dynamic>{
       "title": title,
@@ -44,7 +44,7 @@ class Database {
     };
 
     await documentReferencer
-        .updateData(data)
+        .update(data)
         .whenComplete(() => print("Note item updated in the database"))
         .catchError((e) => print(e));
   }
@@ -58,7 +58,7 @@ class Database {
   static Future<void> deleteItem({
     required String docId,
   }) async {
-    DocumentReference documentReferencer = _mainCollection.document(docId);
+    DocumentReference documentReferencer = _mainCollection.doc(docId);
 
     await documentReferencer
         .delete()

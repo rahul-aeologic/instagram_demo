@@ -13,6 +13,7 @@ class PlusBottomIconScreen extends StatefulWidget {
   String username;
   String profileUrl;
   String idToken;
+
   PlusBottomIconScreen(
     this.name,
     this.username,
@@ -25,8 +26,8 @@ class PlusBottomIconScreen extends StatefulWidget {
 }
 
 class _PlusBottomIconScreenState extends State<PlusBottomIconScreen> {
-  final database = Firestore.instance.collection('users');
-  StorageReference storageReference = FirebaseStorage.instance.ref();
+  final database = FirebaseFirestore.instance.collection('users');
+  Reference storageReference = FirebaseStorage.instance.ref();
   TextEditingController _textEditingController = TextEditingController();
   late File _image;
   late String url;
@@ -40,7 +41,7 @@ class _PlusBottomIconScreenState extends State<PlusBottomIconScreen> {
     profileImage = await _image.readAsBytes();
     var uploadTask =
         storageReference.child(widget.idToken).putData(profileImage);
-    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+    TaskSnapshot taskSnapshot = await uploadTask;
     url = await taskSnapshot.ref.getDownloadURL();
     print(url);
   }
