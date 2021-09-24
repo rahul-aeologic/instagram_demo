@@ -1,3 +1,4 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_demo/screen/bottomIconScreen/accountBottomIconScreen.dart';
 import 'package:instagram_demo/screen/bottomIconScreen/homeBottomIconScreen.dart';
@@ -6,10 +7,11 @@ import 'package:instagram_demo/screen/bottomIconScreen/plusBottomIconScreen.dart
 import 'package:instagram_demo/screen/bottomIconScreen/searchBottomIconScreen.dart';
 
 class HomeScreen extends StatefulWidget {
-  String username;
   String name;
+  String username;
   String profileUrl;
-  HomeScreen(@required this.username, this.name, this.profileUrl);
+  String idToken;
+  HomeScreen(this.name, this.username, this.profileUrl, this.idToken);
 
   @override
   _HomeScreenState createState() => new _HomeScreenState();
@@ -29,9 +31,17 @@ class _HomeScreenState extends State<HomeScreen> {
     page = [
       new HomeBottomIconScreen(),
       new SearchBottomIconScreen(),
-      new PlusBottomIconScreen(),
+      new PlusBottomIconScreen(
+
+        widget.name,
+        widget.username,
+        widget.profileUrl,
+        widget.idToken,
+
+      ),
       new LikeBottomIconScreen(),
-      new AccountBottomIconScreen(widget.name, widget.name, widget.profileUrl),
+      new AccountBottomIconScreen(
+          widget.name,  widget.username,widget.profileUrl),
     ];
   }
 

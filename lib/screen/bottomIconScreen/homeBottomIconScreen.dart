@@ -1,4 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:instagram_demo/utils/database.dart';
 
 class HomeBottomIconScreen extends StatefulWidget {
   @override
@@ -85,30 +88,37 @@ class _HomeBottomIconScreenState extends State<HomeBottomIconScreen> {
     );
   }
 
-  Widget _titleFriendAcc(int i) {
+  Widget _titleFriendAcc(String name, String userImageUrl) {
     return new Container(
       margin: EdgeInsets.all(8.0),
       child: new Row(
         children: <Widget>[
-          new Image.asset(
-            "assets/images/friend_acc.png",
-            height: 40.0,
+          new CircleAvatar(
+            radius: 20,
+            child: ClipRRect(
+                borderRadius: BorderRadius.circular(100),
+                child: CachedNetworkImage(
+                  height: 38,
+                  imageUrl: userImageUrl,
+                )),
           ),
+          // new CachedNetworkImage(imageUrl: userImageUrl,height: 40.0,),
           new Padding(
             padding: EdgeInsets.only(left: 10.0),
-            child: new Text("Friend $i"),
+            child: new Text(name),
           ),
         ],
       ),
     );
   }
 
-  Widget _listImage() {
-    return Container(
-      child: new Image.asset(
-        "assets/images/images.jpeg",
+  Widget _listImage(String imageUrl) {
+    return Flexible(
+      child: Container(
+          child: new CachedNetworkImage(
+        imageUrl: imageUrl,
         fit: BoxFit.cover,
-      ),
+      )),
     );
   }
 
@@ -160,28 +170,43 @@ class _HomeBottomIconScreenState extends State<HomeBottomIconScreen> {
   }
 
   Widget _listView() {
-    return Container(
-      child: new Flexible(
-          child: new ListView.builder(
-              itemCount: 21,
-              itemBuilder: (BuildContext context, int index) {
-                return new Container(
-                  child: (index == 0)
-                      ? _floatPic()
-                      : new Container(
-                          color: Colors.white,
-                          height: 390.0,
-                          child: new Column(
-                            children: <Widget>[
-                              _titleFriendAcc(index),
-                              _listImage(),
-                              _listBottom(),
-                              _listBottomDate()
-                            ],
-                          ),
+    return StreamBuilder<QuerySnapshot>(
+      stream: Database.readItems(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Text('Something went wrong');
+        } else if (snapshot.hasData || snapshot.data != null) {
+          return Flexible(
+              child: new ListView.builder(
+                  itemCount: snapshot.data!.documents.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    var noteInfo = snapshot.data!.documents[index].data!;
+                    String name = noteInfo['name'];
+                    String username = noteInfo['username'];
+                    String userImageUrl = noteInfo['userImageUrl'];
+                    String title = noteInfo['title'];
+                    String imageUrl = noteInfo['imageUrl'];
+                    return new Container(
+                      child: Container(
+                        color: Colors.white,
+                        height: 390.0,
+                        child: new Column(
+                          children: <Widget>[
+                            _titleFriendAcc(name, userImageUrl),
+                            _listImage(imageUrl),
+                            _listBottom(),
+                            _listBottomDate()
+                          ],
                         ),
-                );
-              })),
+                      ),
+                    );
+                  }));
+        }
+
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
     );
   }
 

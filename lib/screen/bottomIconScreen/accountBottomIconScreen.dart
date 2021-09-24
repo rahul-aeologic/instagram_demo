@@ -1,10 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class AccountBottomIconScreen extends StatefulWidget {
-  String username;
   String name;
-  String profileUrl;
-  AccountBottomIconScreen(this.username, this.name, this.profileUrl);
+  String username;
+  String userImageUrl;
+  AccountBottomIconScreen( this.name,this.username, this.userImageUrl);
 
   @override
   _AccountBottomIconScreenState createState() =>
@@ -18,7 +19,7 @@ class _AccountBottomIconScreenState extends State<AccountBottomIconScreen> {
       body: new Column(
         children: <Widget>[
           _appBar(),
-          _profile(widget.profileUrl, widget.name),
+          _profile(widget.userImageUrl, widget.name),
           _centerButtons(),
           _displayImages()
         ],
@@ -148,7 +149,12 @@ class _AccountBottomIconScreenState extends State<AccountBottomIconScreen> {
             children: <Widget>[
               new Column(
                 children: <Widget>[
-                  Image.network(profileUrl),
+                  CircleAvatar(
+                    radius: 40.0,
+                    backgroundColor: Colors.grey,
+                    backgroundImage: CachedNetworkImageProvider(profileUrl),
+                  ),
+                  //Image.network(profileUrl),
                   new Container(
                     margin: EdgeInsets.only(top: 10.0, bottom: 5.0),
                     alignment: Alignment.bottomLeft,

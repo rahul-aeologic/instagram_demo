@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -262,31 +263,33 @@ class _LoginSignupState extends State<LoginSignup> {
   }
 
   void _loginWithEmailPassword() async {
-    if (_userId.text.isEmpty) {
-      _showEmptyDialog("Please enter username");
-    } else if (_password.text.isEmpty) {
-      _showEmptyDialog("Please enter password");
-    } else {
-      try {
-        final FirebaseUser user = (await _auth.signInWithEmailAndPassword(
-          email: _userId.text,
-          password: _password.text,
-        ))
-            .user;
-        if (user != null) {
-          final route = MaterialPageRoute(
-              builder: (context) =>
-                  HomeScreen(user.displayName, user.photoUrl, user.email));
-          Navigator.push(context, route);
-          // String email = _userId.text;
-          print(user.email);
-          print('Log In Successfully......');
-          // _setUserEmail(email);
-        }
-      } catch (e) {
-        _showEmptyDialog("Incorrect username & password");
-      }
-    }
+    Crashlytics.instance.crash();
+
+    // if (_userId.text.isEmpty) {
+    //   _showEmptyDialog("Please enter username");
+    // } else if (_password.text.isEmpty) {
+    //   _showEmptyDialog("Please enter password");
+    // } else {
+    //   try {
+    //     final FirebaseUser user = (await _auth.signInWithEmailAndPassword(
+    //       email: _userId.text,
+    //       password: _password.text,
+    //     ))
+    //         .user;
+    //     if (user != null) {
+    //       final route = MaterialPageRoute(
+    //           builder: (context) => HomeScreen(
+    //               user.displayName, user.photoUrl, user.email, user.uid));
+    //       Navigator.push(context, route);
+    //       // String email = _userId.text;
+    //       print(user.email);
+    //       print('Log In Successfully......');
+    //       // _setUserEmail(email);
+    //     }
+    //   } catch (e) {
+    //     _showEmptyDialog("Incorrect username & password");
+    //   }
+    // }
   }
 
   // void _facebooLogin() async {
@@ -331,8 +334,11 @@ class _LoginSignupState extends State<LoginSignup> {
         idToken: googleSignInAuthentication.idToken,
       );
       final route = MaterialPageRoute(
-          builder: (context) => HomeScreen(googleSignInAccount.email,
-              googleSignInAccount.displayName, googleSignInAccount.photoUrl));
+          builder: (context) => HomeScreen(
+              googleSignInAccount.displayName,
+              googleSignInAccount.email,
+              googleSignInAccount.photoUrl,
+              googleSignInAuthentication.accessToken));
       await _auth.signInWithCredential(credential).then((value) {
         Navigator.push(context, route);
       });
