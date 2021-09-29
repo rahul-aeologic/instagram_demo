@@ -1,17 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 final _firestore = FirebaseFirestore.instance;
-final CollectionReference _mainCollection = _firestore.collection('users');
+final CollectionReference _mainCollection = _firestore.collection('posts');
+final CollectionReference _likeDislikeCollection =
+    _firestore.collection('posts/likes');
 
 class Database {
-  //static String? userUid;
-
   static Future<void> addItem({
     required String name,
     required String username,
     required String userImageUrl,
     required String title,
     required String imageUrl,
+    required String time,
   }) async {
     DocumentReference documentReferencer = _mainCollection.doc();
 
@@ -21,6 +22,9 @@ class Database {
       "username": username,
       "userImageUrl": userImageUrl,
       "imageUrl": imageUrl,
+      "time": time,
+      "likes": '0',
+      "isLiked": false,
     };
 
     await documentReferencer
@@ -34,6 +38,7 @@ class Database {
     required String description,
     required String docId,
     required String imageUrl,
+    required String time,
   }) async {
     DocumentReference documentReferencer = _mainCollection.doc(docId);
 
@@ -49,10 +54,28 @@ class Database {
         .catchError((e) => print(e));
   }
 
-  static Stream<QuerySnapshot> readItems() {
-    CollectionReference notesItemCollection = _mainCollection;
+  static Future<void> likeDislike({
+    required String like,
+    required String postId,
+    required bool isLiked,
+  }) async {
+    DocumentReference documentReferencer = _mainCollection.doc(postId);
 
-    return notesItemCollection.snapshots();
+    Map<String, dynamic> data = <String, dynamic>{
+      "likes": like,
+      "isLiked": isLiked,
+    };
+
+    await documentReferencer
+        .update(data)
+        .whenComplete(() => print("Note item updated in the database"))
+        .catchError((e) => print(e));
+  }
+
+  static Stream<QuerySnapshot> readPosts() {
+    CollectionReference postsCollection = _mainCollection;
+
+    return postsCollection.orderBy('time',descending: true).snapshots();
   }
 
   static Future<void> deleteItem({

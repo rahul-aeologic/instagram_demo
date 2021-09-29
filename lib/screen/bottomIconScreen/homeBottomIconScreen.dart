@@ -9,6 +9,7 @@ class HomeBottomIconScreen extends StatefulWidget {
 }
 
 class _HomeBottomIconScreenState extends State<HomeBottomIconScreen> {
+  bool _likeFlag = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -122,7 +123,11 @@ class _HomeBottomIconScreenState extends State<HomeBottomIconScreen> {
     );
   }
 
-  Widget _listBottom() {
+  Widget _listBottom(
+    isLiked,
+    postId,
+    like,
+  ) {
     return new Container(
       margin: EdgeInsets.all(8.0),
       child: new Row(
@@ -130,12 +135,30 @@ class _HomeBottomIconScreenState extends State<HomeBottomIconScreen> {
         children: <Widget>[
           new Row(
             children: <Widget>[
-              new Icon(Icons.favorite_border, size: 30.0),
-              new Padding(
-                padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                child: new Icon(Icons.receipt, size: 30.0),
-              ),
-              new Icon(Icons.near_me, size: 30.0),
+              GestureDetector(
+                  onTap: () async {
+                    if (!isLiked) {
+                      like = int.parse(like);
+                      like = like + 1;
+                      String likes = like.toString();
+                      await Database.likeDislike(
+                          postId: postId, like: likes, isLiked: true);
+                    } else {
+                      like = int.parse(like);
+                      like = like - 1;
+                      String likes = like.toString();
+                      await Database.likeDislike(
+                          postId: postId, like: likes, isLiked: false);
+                    }
+                  },
+                  child: isLiked
+                      ? new Icon(Icons.favorite, size: 30.0)
+                      : new Icon(Icons.favorite_border, size: 30.0)),
+              // new Padding(
+              //   padding: EdgeInsets.only(left: 10.0, right: 10.0),
+              //   child: new Icon(Icons.receipt, size: 30.0),
+              // ),
+              // new Icon(Icons.near_me, size: 30.0),
             ],
           ),
           new Icon(
@@ -147,20 +170,25 @@ class _HomeBottomIconScreenState extends State<HomeBottomIconScreen> {
     );
   }
 
-  Widget _listBottomDate() {
+  Widget _listBottomDate(
+      String time, String like, String title, String username) {
     return new Container(
-      margin: EdgeInsets.only(left: 10.0, top: 5.0),
+      margin: EdgeInsets.only(left: 10.0),
       child: new Column(
         children: <Widget>[
           new Container(
             alignment: Alignment.bottomLeft,
-            child: new Text("852 Likes"),
+            child: new Text('${like == '0' ? '' : like + 'likes'}'),
+          ),
+          new Container(
+            alignment: Alignment.bottomLeft,
+            child: new Text(username + ': ' + title),
           ),
           new Container(
             margin: EdgeInsets.only(top: 2.0),
             alignment: Alignment.bottomLeft,
             child: new Text(
-              "July 15",
+              time,
               style: TextStyle(color: Colors.grey, fontSize: 12.0),
             ),
           )
@@ -171,7 +199,7 @@ class _HomeBottomIconScreenState extends State<HomeBottomIconScreen> {
 
   Widget _listView() {
     return StreamBuilder<QuerySnapshot>(
-      stream: Database.readItems(),
+      stream: Database.readPosts(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Text('Something went wrong');
@@ -180,6 +208,7 @@ class _HomeBottomIconScreenState extends State<HomeBottomIconScreen> {
               child: new ListView.builder(
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (BuildContext context, int index) {
+                    var postId = snapshot.data!.docs[index].id;
                     var noteInfo = snapshot.data!.docs[index].data()
                         as Map<String, dynamic>;
                     String name = noteInfo['name'];
@@ -187,6 +216,9 @@ class _HomeBottomIconScreenState extends State<HomeBottomIconScreen> {
                     String userImageUrl = noteInfo['userImageUrl'];
                     String title = noteInfo['title'];
                     String imageUrl = noteInfo['imageUrl'];
+                    String time = noteInfo['time'];
+                    String like = noteInfo['likes'];
+                    bool isLiked = noteInfo['isLiked'];
                     return new Container(
                       child: Container(
                         color: Colors.white,
@@ -195,8 +227,8 @@ class _HomeBottomIconScreenState extends State<HomeBottomIconScreen> {
                           children: <Widget>[
                             _titleFriendAcc(name, userImageUrl),
                             _listImage(imageUrl),
-                            _listBottom(),
-                            _listBottomDate()
+                            _listBottom(isLiked, postId, like),
+                            _listBottomDate(time, like, title, username)
                           ],
                         ),
                       ),

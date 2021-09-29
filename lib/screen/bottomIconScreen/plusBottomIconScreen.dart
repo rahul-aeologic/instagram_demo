@@ -7,19 +7,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:instagram_demo/utils/database.dart';
+import 'package:intl/intl.dart';
 
 class PlusBottomIconScreen extends StatefulWidget {
-  String name;
-  String username;
-  String profileUrl;
-  String idToken;
-
   PlusBottomIconScreen(
     this.name,
     this.username,
     this.profileUrl,
     this.idToken,
   );
+  final String name;
+  final String username;
+  final String profileUrl;
+  final String idToken;
 
   @override
   _PlusBottomIconScreenState createState() => _PlusBottomIconScreenState();
@@ -60,6 +60,8 @@ class _PlusBottomIconScreenState extends State<PlusBottomIconScreen> {
   }
 
   _uploadData(String title) async {
+    var now = new DateTime.now();
+    String formattedTime = DateFormat('kk:mm:a').format(now);
     setState(() {
       flag = true;
     });
@@ -71,6 +73,7 @@ class _PlusBottomIconScreenState extends State<PlusBottomIconScreen> {
         userImageUrl: widget.profileUrl,
         title: title,
         imageUrl: url,
+        time: formattedTime,
       ).then((value) {
         setState(() {
           flag = false;
